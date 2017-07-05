@@ -18,8 +18,11 @@ class MongoController:
             #"text": "My first blog post!",
             #"tags": ["mongodb", "python", "pymongo"],
             #"date": datetime.datetime.utcnow()}
-        post_id = self.coll.insert_one(post).inserted_id
-        print(post_id)
+        if self.coll.find(post).count() == 0:
+            post_id = self.coll.insert_one(post).inserted_id
+            print(post_id)
+        else:
+            print("Already existed")
 
 #各ファイルの情報を追加
 def add_cfile_status(sid,file,filepath):
