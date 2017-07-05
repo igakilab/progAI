@@ -12,8 +12,11 @@
       - e1X17002
       - ...
   - e1X17...の中にはその時点の各ソースコードやexeのデータをtxt化したものが含まれる（解析対象）
+  - result-padv17-lec05-2017-0518-092447フォルダの中にはshowlogall.txtとして，任意のタイミングでの各ソースコードのチェック結果が保存されている
 
 ## prog2mongo.py
 
 `python prog2mongo.py ./result-padv17-lec05-2017-0518`
 
+## deleteStudentDir.py, deleteStudentLine.py
+- 生データをプロトタイプ用に間引くためのスクリプト
