@@ -76,9 +76,9 @@ def main(args):
             for sid in os.listdir(siddirs):#student directory name
                 siddir = siddirs +'/'+sid
                 if os.path.isdir(siddir)==True:
-                    parse_sid_dir(sid,siddir)
+                    add_sid_dir(sid,siddir)
                 elif sid == 'showlogall.txt':                    
-                    parse_showlog(siddir)
+                    add_showlog(siddir)
 
 if __name__ == '__main__':
     main(sys.argv)
