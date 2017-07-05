@@ -1,5 +1,5 @@
 #command
-#python prog2mongo.py ./result-padv17-lec05-2017-0518
+#python prog2mongo.py ../result-padv17-lec05-2017-0518
 
 from pymongo import MongoClient
 import datetime
