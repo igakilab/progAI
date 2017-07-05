@@ -21,6 +21,7 @@ class MongoController:
         post_id = self.coll.insert_one(post).inserted_id
         print(post_id)
 
+#各ファイルの情報を追加
 def add_file_status(sid,file,filepath):
     update_time = datetime.datetime.fromtimestamp(os.stat(filepath).st_mtime)
     print(filepath)
@@ -30,7 +31,8 @@ def add_file_status(sid,file,filepath):
     mc = MongoController()
     mc.add_post(file_dict)
 
-def parse_sid_dir(sid,siddir):
+#student dir配下のファイルそれぞれについて情報を追加
+def add_sid_dir(sid,siddir):
     for sfile in os.listdir(siddir):
         if re.compile(r'^_|^\.|^#|~$|.pdf$').search(sfile):
             pass
@@ -39,7 +41,8 @@ def parse_sid_dir(sid,siddir):
             if os.path.isdir(sourcefile)!=True:
                 add_file_status(sid,sfile,siddir+'/'+sfile)
 
-def parse_showlog(showlogfile):
+#showlogall.txt内の課題毎コンパイル情報を追加
+def add_showlog(showlogfile):
     print("showlogall:"+showlogfile)
     for line in open(showlogfile):
         line = line[:-1]
