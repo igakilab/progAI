@@ -115,7 +115,7 @@ def main(args):
                 siddir = siddirs +'/'+sid
                 if os.path.isdir(siddir)==True:
                     add_sid_dir(sid,siddir)
-                elif sid == 'showlogall.txt':                    
+                elif sid == 'showlogall.txt':
                     add_showlog(siddir)
 
 if __name__ == '__main__':
