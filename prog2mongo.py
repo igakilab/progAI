@@ -2,6 +2,7 @@
 #python prog2mongo.py ../result-padv17-lec05-2017-0518
 
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 import datetime
 import os
 import sys
@@ -23,6 +24,18 @@ class MongoController:
             print(post_id)
         else:
             print("Already existed")
+    #file_dictをadd_postすると同時に，file_dictに指定されたupdate_timeよりsource_update_timeが6分前までで最新の対応するsourceのドキュメントにstatusとmessageを追加する
+    def update_source_status(self, file_dict):
+        time_range2 = file_dict["check_time"]
+        time_range1 = time_range2 - datetime.timedelta(minutes=6)
+        print(str(time_range1) + '~~~~' + str(time_range2))
+        
+        key = {'sid':file_dict['sid'],'source':file_dict['source'],'source_update_time':{'$gt':time_range1,'$lt':time_range2},'contents':{'$exists':True}}
+        try:
+            oid = self.coll.find(key).sort('source_update_time',-1).limit(1)[0]['_id']
+            self.coll.update({'_id':ObjectId(oid)},{'$set':{'check_time':file_dict['check_time'],'status':file_dict['status'],'message':file_dict['message']}})
+        except (IndexError):
+            pass
 
 #各ファイルの情報を追加
 def add_cfile_status(sid,file,filepath):
@@ -71,8 +84,8 @@ def add_showlog(showlogfile):
         if line.startswith('=='):
             try:
                 #"=="で始まる行からチェック時刻を取得する
-                check_date = datetime.datetime.strptime(line.split()[2][0:16],'%Y-%m%d-%H%M%S')
-                print(check_date)
+                check_time = datetime.datetime.strptime(line.split()[2][0:16],'%Y-%m%d-%H%M%S')
+                #print(check_date)
             except (ValueError):
                 pass
         elif line.startswith('e1'):
@@ -85,10 +98,13 @@ def add_showlog(showlogfile):
                 status = line.split()[2]
                 message = ' '.join(line.split()[3:])
                 #print(message)
-                file_dict = {'sid':sid,'source':source,'update_time':check_date,'status':status,'message':message}
-                print(file_dict)
+                file_dict = {'sid':sid,'source':source,'check_time':check_time,'status':status,'message':message}
+                #print(file_dict)
                 mc = MongoController()
-                mc.add_post(file_dict)
+                mc.update_source_status(file_dict)
+
+#def update_source_status_bylog(showlogfile):
+    #showlogのチェック時刻-9分(3分間隔なら6分？）の範囲内の最新のsource_update_timeのファイルにshowlogのstatusとmessageを付与する
 
 def main(args):
     #print(os.listdir(args[1]))
@@ -100,7 +116,7 @@ def main(args):
                 if os.path.isdir(siddir)==True:
                     add_sid_dir(sid,siddir)
                 elif sid == 'showlogall.txt':                    
-                    pass #add_showlog(siddir)
+                    add_showlog(siddir)
 
 if __name__ == '__main__':
     main(sys.argv)
